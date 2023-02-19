@@ -137,7 +137,7 @@ ABBREVIATION_TRAINING: dict[str, type[Training]] = {
 }
 
 
-def read_package(workout_type: str, data: list[int]) -> Training:
+def read_package(workout_type: str, data: list[float]) -> Training:
     """Прочитать данные полученные от датчиков."""
     if workout_type not in ABBREVIATION_TRAINING:
         raise AttributeError("Несуществующий тип тренировки")
@@ -153,7 +153,7 @@ def main(training: Training) -> None:
 
 if __name__ == '__main__':
     packages: list[str, list[int]] = [
-        ('SWM', [750, 1, 80, 25, 40]),
+        ('SWM', [720, 1, 80, 25, 40]),
         ('RUN', [15000, 1, 75]),
         ('WLK', [9000, 1, 75, 180]),
     ]
