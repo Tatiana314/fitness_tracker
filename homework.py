@@ -1,4 +1,5 @@
 from dataclasses import dataclass, asdict
+from typing import List
 
 
 @dataclass
@@ -137,7 +138,7 @@ ABBREVIATION_TRAINING: dict[str, type[Training]] = {
 }
 
 
-def read_package(workout_type: str, data: list[float]) -> Training:
+def read_package(workout_type: str, data: List[float]) -> Training:
     """Прочитать данные полученные от датчиков."""
     if workout_type not in ABBREVIATION_TRAINING:
         raise AttributeError("Несуществующий тип тренировки")
