@@ -1,5 +1,5 @@
 from dataclasses import dataclass, asdict
-from typing import List
+from typing import List, Type
 
 
 @dataclass
@@ -130,7 +130,7 @@ class Swimming(Training):
         )
 
 
-ABBREVIATION_TRAINING: dict[str, type[Training]] = {
+ABBREVIATION_TRAINING: dict[str, Type[Training]] = {
     'SWM': Swimming,
     'RUN': Running,
     'WLK': SportsWalking
@@ -152,7 +152,7 @@ def main(training: Training) -> None:
 
 
 if __name__ == '__main__':
-    packages: list[str, list[float]] = [
+    packages: list[str, List[float]] = [
         ('SWM', [720, 1, 80, 25, 40]),
         ('RUN', [15000, 1, 75]),
         ('WLK', [9000, 1, 75, 180]),
