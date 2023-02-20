@@ -1,5 +1,5 @@
+from __future__ import annotations
 from dataclasses import dataclass, asdict
-from typing import List, Type
 
 
 @dataclass
@@ -130,14 +130,14 @@ class Swimming(Training):
         )
 
 
-ABBREVIATION_TRAINING: dict[str, Type[Training]] = {
+ABBREVIATION_TRAINING: dict[str, type[Training]] = {
     'SWM': Swimming,
     'RUN': Running,
     'WLK': SportsWalking
 }
 
 
-def read_package(workout_type: str, data: List[float]) -> Training:
+def read_package(workout_type: str, data: list[float]) -> Training:
     """Прочитать данные полученные от датчиков."""
     if workout_type not in ABBREVIATION_TRAINING:
         raise AttributeError("Несуществующий тип тренировки")
@@ -152,7 +152,7 @@ def main(training: Training) -> None:
 
 
 if __name__ == '__main__':
-    packages: list[str, List[float]] = [
+    packages: list[str, list[float]] = [
         ('SWM', [720, 1, 80, 25, 40]),
         ('RUN', [15000, 1, 75]),
         ('WLK', [9000, 1, 75, 180]),
