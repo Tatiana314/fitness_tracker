@@ -1,5 +1,5 @@
 from __future__ import annotations
-from dataclasses import dataclass, asdict
+from dataclasses import dataclass, asdict, fields
 
 
 @dataclass
@@ -45,13 +45,13 @@ class Training:
     def get_spent_calories(self) -> float:
         """Получить количество затраченных калорий."""
         raise NotImplementedError(
-            'Определите get_spent_calories в %s.' % (self.__class__.__name__)
+            f'Определите get_spent_calories в {type(self).__name__}.'
         )
 
     def show_training_info(self) -> InfoMessage:
         """Вернуть информационное сообщение о выполненной тренировке."""
         return InfoMessage(
-            self.__class__.__name__,
+            type(self).__name__,
             self.duration,
             self.get_distance(),
             self.get_mean_speed(),
@@ -82,9 +82,6 @@ class Running(Training):
 @dataclass
 class SportsWalking(Training):
     """Тренировка: спортивная ходьба."""
-    action: int
-    duration: float
-    weight: float
     height: float
     COEFFICIENT_WEIGHT_SHIFT = 0.035
     COEFFICIENT_WEIGHT_MULTIPLIER = 0.029
@@ -110,9 +107,6 @@ class Swimming(Training):
     LEN_STEP = 1.38
     CALORIES_MEAN_SPEED_SHIFT = 1.1
     CALORIES_MEAN_SPEED_MULTIPLIER = 2
-    action: int
-    duration: float
-    weight: float
     length_pool: float
     count_pool: int
 
@@ -130,20 +124,24 @@ class Swimming(Training):
         )
 
 
-ABBREVIATION_TRAINING: dict[str, type[Training]] = {
-    'SWM': Swimming,
-    'RUN': Running,
-    'WLK': SportsWalking
+TYPES_TRAINING: dict[str, list(type[Training], int)] = {
+    'SWM': (Swimming, 5),
+    'RUN': (Running, 3),
+    'WLK': (SportsWalking, 4)
 }
+DATA_ERROR = (
+    'Ошибка передачи данных о тренировке. '
+    'Для {training} необходимо передать {number} показателя.'
+)
+TRAINING_ERROR = (
+    '{data} - несуществующий вид тренировки. '
+    'Доступные виды тренировок: {workout}.'
+)
 
 
 def read_package(workout_type: str, data: list[float]) -> Training:
     """Прочитать данные полученные от датчиков."""
-    if workout_type not in ABBREVIATION_TRAINING:
-        raise AttributeError("Несуществующий тип тренировки")
-    if len(ABBREVIATION_TRAINING[workout_type].__annotations__) != len(data):
-        raise TypeError("Нет данных тренировки")
-    return ABBREVIATION_TRAINING[workout_type](*data)
+    return TYPES_TRAINING[workout_type][0](*data)
 
 
 def main(training: Training) -> None:
@@ -159,4 +157,15 @@ if __name__ == '__main__':
     ]
 
     for workout_type, data in packages:
+        if workout_type not in TYPES_TRAINING:
+            raise ValueError(
+                TRAINING_ERROR.format(
+                    data=workout_type, workout=list(TYPES_TRAINING.keys()))
+            )
+        if len(fields(TYPES_TRAINING[workout_type][0])) != len(data):
+            raise ValueError(
+                DATA_ERROR.format(
+                    training=workout_type,
+                    number=TYPES_TRAINING[workout_type][1])
+            )
         main(read_package(workout_type, data))
