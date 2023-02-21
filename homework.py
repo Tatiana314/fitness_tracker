@@ -131,6 +131,7 @@ TYPES_TRAINING: dict[str, list(type[Training], int)] = {
 }
 DATA_ERROR = (
     'Ошибка передачи данных о тренировке. '
+    'Передано {index} показателя. '
     'Для {training} необходимо передать {number} показателя.'
 )
 TRAINING_ERROR = (
@@ -141,6 +142,21 @@ TRAINING_ERROR = (
 
 def read_package(workout_type: str, data: list[float]) -> Training:
     """Прочитать данные полученные от датчиков."""
+    if workout_type not in TYPES_TRAINING:
+        raise ValueError(
+            TRAINING_ERROR.format(
+                data=workout_type,
+                workout=list(TYPES_TRAINING.keys())
+            )
+        )
+    if len(fields(TYPES_TRAINING[workout_type][0])) != len(data):
+        raise ValueError(
+            DATA_ERROR.format(
+                index=len(data),
+                training=workout_type,
+                number=TYPES_TRAINING[workout_type][1]
+            )
+        )
     return TYPES_TRAINING[workout_type][0](*data)
 
 
@@ -157,15 +173,4 @@ if __name__ == '__main__':
     ]
 
     for workout_type, data in packages:
-        if workout_type not in TYPES_TRAINING:
-            raise ValueError(
-                TRAINING_ERROR.format(
-                    data=workout_type, workout=list(TYPES_TRAINING.keys()))
-            )
-        if len(fields(TYPES_TRAINING[workout_type][0])) != len(data):
-            raise ValueError(
-                DATA_ERROR.format(
-                    training=workout_type,
-                    number=TYPES_TRAINING[workout_type][1])
-            )
         main(read_package(workout_type, data))
