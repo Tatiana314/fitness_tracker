@@ -1,8 +1,9 @@
-import re
-import pytest
-import types
 import inspect
+import re
+import types
 from collections import namedtuple
+
+import pytest
 from conftest import Capturing
 
 try:
